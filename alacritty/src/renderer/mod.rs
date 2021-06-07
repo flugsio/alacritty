@@ -100,6 +100,11 @@ pub struct TextShaderProgram {
     ///
     /// Rendering is split into two passes; 1 for backgrounds, and one for text.
     u_background: GLint,
+
+    /// Shadow pass flag.
+    ///
+    /// Rendering is split into three passes; 1 for shadows, and one for text.
+    u_shadow: GLint,
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -821,6 +826,7 @@ impl<'a> RenderApi<'a> {
 
         unsafe {
             self.program.set_background_pass(true);
+            self.program.set_shadow_pass(false);
             gl::DrawElementsInstanced(
                 gl::TRIANGLES,
                 6,
@@ -829,6 +835,16 @@ impl<'a> RenderApi<'a> {
                 self.batch.len() as GLsizei,
             );
             self.program.set_background_pass(false);
+            self.program.set_shadow_pass(true);
+            gl::DrawElementsInstanced(
+                gl::TRIANGLES,
+                6,
+                gl::UNSIGNED_INT,
+                ptr::null(),
+                self.batch.len() as GLsizei,
+            );
+            self.program.set_background_pass(false);
+            self.program.set_shadow_pass(false);
             gl::DrawElementsInstanced(
                 gl::TRIANGLES,
                 6,
@@ -999,6 +1015,7 @@ impl TextShaderProgram {
             u_projection: program.get_uniform_location(cstr!("projection"))?,
             u_cell_dim: program.get_uniform_location(cstr!("cellDim"))?,
             u_background: program.get_uniform_location(cstr!("backgroundPass"))?,
+            u_shadow: program.get_uniform_location(cstr!("shadowPass"))?,
             program,
         })
     }
@@ -1037,6 +1054,14 @@ impl TextShaderProgram {
 
         unsafe {
             gl::Uniform1i(self.u_background, value);
+        }
+    }
+
+    fn set_shadow_pass(&self, shadow_pass: bool) {
+        let value = if shadow_pass { 1 } else { 0 };
+
+        unsafe {
+            gl::Uniform1i(self.u_shadow, value);
         }
     }
 }

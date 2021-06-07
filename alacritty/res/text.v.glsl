@@ -25,6 +25,7 @@ uniform vec2 cellDim;
 uniform vec4 projection;
 
 uniform int backgroundPass;
+uniform int shadowPass;
 
 #define WIDE_CHAR 1
 
@@ -57,6 +58,9 @@ void main() {
         glyphOffset.y = cellDim.y - glyphOffset.y;
 
         vec2 finalPosition = cellPosition + glyphSize * position + glyphOffset;
+        if (shadowPass == 1) {
+          finalPosition += vec2(cellDim.x/6);
+        }
         gl_Position =
             vec4(projectionOffset + projectionScale * finalPosition, 0.0, 1.0);
 
@@ -67,4 +71,7 @@ void main() {
 
     bg = backgroundColor / 255.0;
     fg = vec4(textColor.rgb / 255.0, textColor.a);
+    if (shadowPass == 1) {
+      fg = vec4(pow(backgroundColor.rgb / 256.0 + .001, vec3(2.0)) / 0.8, 1.0);
+    }
 }
