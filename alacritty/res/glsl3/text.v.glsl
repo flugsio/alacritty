@@ -74,4 +74,7 @@ void main() {
         vec2 uvSize = uv.zw;
         TexCoords = uvOffset + position * uvSize;
     }
+    else if (renderingPass == 4) {
+      fg = vec4(pow(backgroundColor.rgb / 256.0 + .001, vec3(2.0)) / 0.8, 1.0);
+    }
 }

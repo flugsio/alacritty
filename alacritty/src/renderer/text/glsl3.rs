@@ -247,6 +247,14 @@ impl<'a> TextRenderApi<Batch> for RenderApi<'a> {
                 ptr::null(),
                 self.batch.len() as GLsizei,
             );
+            self.program.set_rendering_pass(RenderingPass::ShadowPass);
+            gl::DrawElementsInstanced(
+                gl::TRIANGLES,
+                6,
+                gl::UNSIGNED_INT,
+                ptr::null(),
+                self.batch.len() as GLsizei,
+            );
             self.program.set_rendering_pass(RenderingPass::SubpixelPass1);
             gl::DrawElementsInstanced(
                 gl::TRIANGLES,

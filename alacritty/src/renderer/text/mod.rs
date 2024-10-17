@@ -43,6 +43,9 @@ enum RenderingPass {
 
     /// The third pass to render text with GLES2 renderer.
     SubpixelPass3 = 3,
+
+    /// Rendering pass to render shadows with both GLES2 and GLSL3 renderers.
+    ShadowPass = 4,
 }
 
 pub trait TextRenderer<'a> {
